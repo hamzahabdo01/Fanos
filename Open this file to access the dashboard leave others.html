@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaVista Analytics • Executive Command Center</title>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ChartJS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        fanos: {
+                            'surface': 'var(--color-background)',
+                            'surface-dim': 'var(--color-surface-container-high)',
+                            'surface-container-lowest': 'var(--color-surface)',
+                            'surface-container-low': 'var(--color-surface-low)',
+                            'surface-container': 'var(--color-surface-container)',
+                            'surface-container-high': 'var(--color-surface-container-high)',
+                            'surface-container-highest': 'var(--color-surface-container-highest)',
+                            'on-surface': 'var(--color-text-on-surface)',
+                            'on-surface-variant': 'var(--color-text-on-surface-variant)',
+                            'outline': 'var(--color-gray-border)',
+                            'outline-variant': 'var(--color-surface-container-highest)',
+                            'primary': 'var(--color-primary)',
+                            'primary-container': 'var(--color-primary-container)',
+                            'on-primary-container': 'var(--color-on-primary-container)',
+                            'secondary': 'var(--color-secondary)',
+                            'tertiary': 'var(--color-tertiary)',
+                            'secondary-container': 'var(--color-secondary-container)',
+                            'on-secondary-container': 'var(--color-secondary)',
+                            'error': '#ba1a1a',
+                            'success': '#10b981',
+                            'warning': '#d97706',
+                            'gray-border': 'var(--color-gray-border)',
+                            'hover-teal': 'var(--color-primary-hover)',
+                            'primary-text': 'var(--color-text-primary)'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        :root {
+            --color-primary: #0b4f54;
+            --color-primary-dark: #00373b;
+            --color-primary-hover: #115e59;
+            --color-on-primary-container: #86bfc5;
+            --color-primary-container: #0b4f54;
+            --color-secondary: #515f74;
+            --color-background: #f6fafc;
+            --color-surface: #ffffff;
+            --color-surface-low: #f0f4f6;
+            --color-surface-container: #eaeef0;
+            --color-surface-container-high: #e5e9eb;
+            --color-surface-container-highest: #dfe3e5;
+            --color-text-primary: #0a3235;
+            --color-text-on-surface: #181c1e;
+            --color-text-on-surface-variant: #404849;
+            --color-gray-border: #CFD8DC;
+        }
+
+        body {
+            background-color: var(--color-background) !important;
+            color: var(--color-text-on-surface) !important;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Fluid background overrides */
+        .fanos-card {
+            background-color: var(--color-surface) !important;
+            border: 1px solid var(--color-gray-border) !important;
+            box-shadow: 0px 4px 20px rgba(10, 50, 53, 0.06);
+            transition: all 0.3s ease;
+        }
+        .fanos-card:hover {
+            border-color: var(--color-primary) !important;
+        }
+
+        .fanos-text-title {
+            color: var(--color-text-primary) !important;
+        }
+        .fanos-text-body {
+            color: var(--color-text-on-surface-variant) !important;
+        }
+        /* Custom scrollbar matching eucalyptus theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--color-surface-low);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-gray-border);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-secondary);
+        }
+
+        /* Shadow Level 1: Extra diffused soft shadow */
+        .fanos-shadow {
+            box-shadow: 0px 4px 20px var(--shadow-color, rgba(10, 50, 53, 0.06));
+        }
+
+        /* Shadow Level 2: Pronounced overlay shadow with teal tint */
+        .fanos-overlay-shadow {
+            box-shadow: 0px 12px 32px var(--shadow-color-strong, rgba(10, 50, 53, 0.12));
+        }
+
+        /* Heatmap Grid Colors */
+        .grid-green { background-color: rgba(16, 185, 129, 0.25); color: #065f46; font-weight: 600; }
+        .grid-light-green { background-color: rgba(16, 185, 129, 0.12); color: #047857; font-weight: 500; }
+        .grid-yellow { background-color: rgba(245, 158, 11, 0.2); color: #92400e; font-weight: 600; }
+        .grid-orange { background-color: rgba(249, 115, 22, 0.25); color: #c2410c; font-weight: 600; }
+        .grid-red { background-color: rgba(239, 68, 68, 0.25); color: #b91c1c; font-weight: 700; }
+
+        /* Typography sizing overrides matching Design System */
+        .display-lg {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 60px;
+            letter-spacing: -0.02em;
+        }
+        .headline-lg {
+            font-size: 32px;
+            font-weight: 600;
+            line-height: 40px;
+            letter-spacing: -0.01em;
+        }
+        .title-md {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 28px;
+            color: var(--color-text-primary);
+        }
+        .body-lg {
+            font-size: 18px;
+            font-weight: 400;
+            line-height: 28px;
+        }
+        .body-md {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 24px;
+        }
+        .label-sm {
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 20px;
+            letter-spacing: 0.01em;
+        }
+        .caption {
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 16px;
+        }
+    </style>
+</head>
+<body class="bg-fanos-surface text-fanos-on-surface font-sans flex overflow-x-hidden min-h-screen">
+
+    <!-- Left Sidebar: Deep Forest/Corporate Teal (240px wide) -->
+    <aside class="w-[240px] shrink-0 text-[var(--color-text-on-surface)] flex flex-col h-screen sticky top-0 z-40 transition-all duration-300 overflow-hidden" style="background-color: var(--color-primary-dark); border-right: 1px solid var(--color-primary-dark);">
+        <!-- Logo & Branding + Nav: scrollable top section -->
+        <div class="flex-1 overflow-y-auto p-6 pb-2">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-[var(--color-on-primary-container)] flex items-center justify-center text-fanos-primary-text font-black text-base shadow-sm">
+                    <i class="fa-solid fa-prescription-bottle-medical"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-bold tracking-tight text-white leading-none">PharmaVista</h1>
+                    <p class="text-[10px] text-[var(--color-on-primary-container)] uppercase tracking-widest font-semibold mt-1">Analytics Engine</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="mt-8 space-y-1">
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold text-white bg-fanos-primary shadow-sm transition-all duration-150">
+                    <i class="fa-solid fa-chart-line text-sm w-4 text-[var(--color-on-primary-container)]"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all duration-150">
+                    <i class="fa-solid fa-coins text-sm w-4"></i>
+                    <span>Sales & Marketing</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all duration-150">
+                    <i class="fa-solid fa-boxes-stacked text-sm w-4"></i>
+                    <span>Products</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all duration-150">
+                    <i class="fa-solid fa-industry text-sm w-4"></i>
+                    <span>Manufacturing</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all duration-150">
+                    <i class="fa-solid fa-truck-arrow-right text-sm w-4"></i>
+                    <span>Supply Chain</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all duration-150">
+                    <i class="fa-solid fa-shield-halved text-sm w-4"></i>
+                    <span>Quality & Compliance</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all duration-150">
+                    <i class="fa-solid fa-vial-virus text-sm w-4"></i>
+                    <span>Pharmacovigilance</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all duration-150">
+                    <i class="fa-solid fa-flask text-sm w-4"></i>
+                    <span>Clinical Trials</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all duration-150">
+                    <i class="fa-solid fa-file-invoice-dollar text-sm w-4"></i>
+                    <span>Finance</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all duration-150">
+                    <i class="fa-solid fa-square-poll-vertical text-sm w-4"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all duration-150">
+                    <i class="fa-solid fa-sliders text-sm w-4"></i>
+                    <span>Administration</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Toggle Button for Customizer -->
+        <div class="p-4 border-t border-white/10" style="background-color: var(--color-primary-dark)">
+            <button id="toggle-customizer-btn" class="w-full flex items-center justify-between text-xs font-semibold text-white/70 hover:text-white transition-all duration-150 py-1 focus:outline-none">
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-palette text-xs text-[var(--color-on-primary-container)]"></i>
+                    <span>Customize Palette</span>
+                </span>
+                <i id="toggle-customizer-chevron" class="fa-solid fa-chevron-down text-[10px] text-white/70"></i>
+            </button>
+        </div>
+
+        <!-- Palette Customizer: scrollable bottom panel, hidden by default -->
+        <div id="palette-customizer-panel" class="overflow-y-auto hidden" style="max-height: 55vh; border-top: 1px solid rgba(255,255,255,0.1);">
+            <div class="p-4 border-t border-fanos-gray-border" style="background-color: var(--color-primary-dark)">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[10px] uppercase font-bold tracking-widest text-[var(--color-on-primary-container)]">Palette Customizer</span>
+                    <i class="fa-solid fa-palette text-xs text-[var(--color-on-primary-container)]"></i>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-[10px]">
+                    <div>
+                        <label class="text-[var(--color-on-primary-container)] block mb-0.5 font-semibold">Primary Accent</label>
+                        <input type="color" id="theme-primary" value="#0b4f54" class="w-full h-8 rounded border-0 cursor-pointer bg-transparent">
+                    </div>
+                    <div>
+                        <label class="text-[var(--color-on-primary-container)] block mb-0.5 font-semibold">Secondary (Slate)</label>
+                        <input type="color" id="theme-secondary" value="#515f74" class="w-full h-8 rounded border-0 cursor-pointer bg-transparent">
+                    </div>
+                    <div>
+                        <label class="text-[var(--color-on-primary-container)] block mb-0.5 font-semibold">Tertiary</label>
+                        <input type="color" id="theme-tertiary" value="#003734" class="w-full h-8 rounded border-0 cursor-pointer bg-transparent">
+                    </div>
+                    <div>
+                        <label class="text-[var(--color-on-primary-container)] block mb-0.5 font-semibold">Canvas Bg</label>
+                        <input type="color" id="theme-bg" value="#f6fafc" class="w-full h-8 rounded border-0 cursor-pointer bg-transparent">
+                    </div>
+                    <div>
+                        <label class="text-[var(--color-on-primary-container)] block mb-0.5 font-semibold">Card Surface</label>
+                        <input type="color" id="theme-surface" value="#ffffff" class="w-full h-8 rounded border-0 cursor-pointer bg-transparent">
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <label class="text-[var(--color-on-primary-container)] block mb-0.5 font-semibold text-[9px]">Select Preset Theme</label>
+                    <select id="theme-presets" class="w-full text-white rounded px-2 py-1 text-[11px] focus:outline-none" style="background-color: var(--color-primary); border: 1px solid var(--color-primary-hover)">
+                        <option value="eucalyptus">Tech-Forward Eucalyptus</option>
+                        <option value="coldchain">Cold Chain Steel & Logistics</option>
+                        <option value="emerald">High-Performance Emerald</option>
+                        <option value="contrast">Minimalist High-Contrast Slate</option>
+                        <option value="midnight">Deep Charcoal Dark Mode</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- Main Content Canvas (Fixed-Fluid Layout centered to 1280px max-width) -->
+    <main class="flex-1 min-w-0 max-w-[1280px] mx-auto px-8 py-8 flex flex-col gap-6">
+
+        <!-- Top Command Header -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-fanos-gray-border">
+            <div>
+                <h1 class="title-md font-bold fanos-text-title">Executive Command Center</h1>
+                <p class="caption fanos-text-body mt-1">Real-time overview of pharmaceutical operations and performance</p>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex items-center flex-wrap gap-3">
+                <!-- Date Selector Button -->
+                <div class="flex items-center gap-2 fanos-card rounded-lg px-3 py-1.5 text-xs text-fanos-on-surface hover:bg-fanos-surface-container transition-all cursor-pointer fanos-shadow">
+                    <i class="fa-solid fa-calendar-days fanos-text-body"></i>
+                    <span class="font-semibold">May 12 – Jun 8, 2024</span>
+                </div>
+                <!-- Feed Mode Badge -->
+                <div class="flex items-center gap-2 fanos-card rounded-lg px-3 py-1.5 text-xs text-fanos-on-surface hover:bg-fanos-surface-container transition-all cursor-pointer fanos-shadow">
+                    <span class="w-2 h-2 rounded-full bg-fanos-success animate-pulse"></span>
+                    <span class="font-semibold fanos-text-title">Real-time</span>
+                </div>
+
+                <!-- Notification Bell -->
+                <div class="w-9 h-9 rounded-lg bg-white border border-fanos-gray-border flex items-center justify-center relative text-fanos-on-surface hover:bg-fanos-surface-container transition-all cursor-pointer fanos-shadow">
+                    <i class="fa-regular fa-bell text-sm"></i>
+                    <span class="absolute -top-1.5 -right-1.5 bg-fanos-error text-white font-black text-[9px] px-1.5 py-0.5 rounded-full">12</span>
+                </div>
+
+                <!-- Profile Dropdown -->
+                <div class="flex items-center gap-3 fanos-card rounded-lg px-3 py-1 text-xs fanos-shadow">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100" alt="Dr. James Wilson" class="w-7 h-7 rounded-full object-cover">
+                    <div class="text-left">
+                        <p class="font-bold fanos-text-title leading-none">Dr. James Wilson</p>
+                        <p class="text-[9px] text-fanos-secondary leading-none mt-0.5">Chief Operations Officer</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Top KPI Cards Summary Grid (6 columns) -->
+        <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <!-- KPI 1: Revenue -->
+            <div class="fanos-card p-4 flex flex-col justify-between h-[120px] fanos-shadow hover:border-fanos-primary transition-all duration-150">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] uppercase font-bold tracking-wider fanos-text-body">Total Revenue</span>
+                    <div class="w-6 h-6 rounded bg-fanos-primary flex items-center justify-center text-white text-xs"><i class="fa-solid fa-wallet"></i></div>
+                </div>
+                <div class="mt-2">
+                    <div class="text-xl font-bold fanos-text-title leading-tight flex items-baseline gap-1.5">
+                        <span>$1.42B</span>
+                        <span class="text-[10px] text-fanos-success font-bold"><i class="fa-solid fa-arrow-up"></i> 12.8%</span>
+                    </div>
+                    <p class="text-[8px] text-fanos-outline mt-0.5">vs Apr 14 - May 11, 2024</p>
+                </div>
+                <!-- Sparkline Canvas -->
+                <div class="h-6 w-full mt-1">
+                    <canvas id="sparkline-revenue"></canvas>
+                </div>
+            </div>
+
+            <!-- KPI 2: Gross Profit -->
+            <div class="fanos-card p-4 flex flex-col justify-between h-[120px] fanos-shadow hover:border-fanos-primary transition-all duration-150">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] uppercase font-bold tracking-wider fanos-text-body">Gross Profit</span>
+                    <div class="w-6 h-6 rounded bg-fanos-primary flex items-center justify-center text-white text-xs"><i class="fa-solid fa-chart-line"></i></div>
+                </div>
+                <div class="mt-2">
+                    <div class="text-xl font-bold fanos-text-title leading-tight flex items-baseline gap-1.5">
+                        <span>$842M</span>
+                        <span class="text-[10px] text-fanos-success font-bold"><i class="fa-solid fa-arrow-up"></i> 9.3%</span>
+                    </div>
+                    <p class="text-[8px] text-fanos-outline mt-0.5">vs Apr 14 - May 11, 2024</p>
+                </div>
+                <div class="h-6 w-full mt-1">
+                    <canvas id="sparkline-profit"></canvas>
+                </div>
+            </div>
+
+            <!-- KPI 3: Inventory Value -->
+            <div class="fanos-card p-4 flex flex-col justify-between h-[120px] fanos-shadow hover:border-fanos-primary transition-all duration-150">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] uppercase font-bold tracking-wider fanos-text-body">Inventory Value</span>
+                    <div class="w-6 h-6 rounded bg-fanos-primary flex items-center justify-center text-white text-xs"><i class="fa-solid fa-cubes"></i></div>
+                </div>
+                <div class="mt-2">
+                    <div class="text-xl font-bold fanos-text-title leading-tight flex items-baseline gap-1.5">
+                        <span>$2.35B</span>
+                        <span class="text-[10px] text-fanos-success font-bold"><i class="fa-solid fa-arrow-up"></i> 4.7%</span>
+                    </div>
+                    <p class="text-[8px] text-fanos-outline mt-0.5">vs Apr 14 - May 11, 2024</p>
+                </div>
+                <div class="h-6 w-full mt-1">
+                    <canvas id="sparkline-inventory"></canvas>
+                </div>
+            </div>
+
+            <!-- KPI 4: Manufacturing Yield -->
+            <div class="fanos-card p-4 flex flex-col justify-between h-[120px] fanos-shadow hover:border-fanos-primary transition-all duration-150">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] uppercase font-bold tracking-wider fanos-text-body">Mfg Yield</span>
+                    <div class="w-6 h-6 rounded bg-fanos-primary flex items-center justify-center text-white text-xs"><i class="fa-solid fa-gears"></i></div>
+                </div>
+                <div class="mt-2">
+                    <div class="text-xl font-bold fanos-text-title leading-tight flex items-baseline gap-1.5">
+                        <span>89.7%</span>
+                        <span class="text-[10px] text-fanos-success font-bold"><i class="fa-solid fa-arrow-up"></i> 2.1pp</span>
+                    </div>
+                    <p class="text-[8px] text-fanos-outline mt-0.5">vs Apr 14 - May 11, 2024</p>
+                </div>
+                <div class="h-6 w-full mt-1">
+                    <canvas id="sparkline-yield"></canvas>
+                </div>
+            </div>
+
+            <!-- KPI 5: Compliance Score -->
+            <div class="fanos-card p-4 flex flex-col justify-between h-[120px] fanos-shadow hover:border-fanos-primary transition-all duration-150">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] uppercase font-bold tracking-wider fanos-text-body">Compliance</span>
+                    <div class="w-6 h-6 rounded bg-fanos-primary flex items-center justify-center text-white text-xs"><i class="fa-solid fa-shield-check"></i></div>
+                </div>
+                <div class="mt-2">
+                    <div class="text-xl font-bold fanos-text-title leading-tight flex items-baseline gap-1.5">
+                        <span>94.2%</span>
+                        <span class="text-[10px] text-fanos-success font-bold"><i class="fa-solid fa-arrow-up"></i> 3.4pp</span>
+                    </div>
+                    <p class="text-[8px] text-fanos-outline mt-0.5">vs Apr 14 - May 11, 2024</p>
+                </div>
+                <div class="h-6 w-full mt-1">
+                    <canvas id="sparkline-compliance"></canvas>
+                </div>
+            </div>
+
+            <!-- KPI 6: Open Quality Events -->
+            <div class="fanos-card p-4 flex flex-col justify-between h-[120px] fanos-shadow hover:border-fanos-primary transition-all duration-150">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] uppercase font-bold tracking-wider fanos-text-body">Quality Events</span>
+                    <div class="w-6 h-6 rounded bg-rose-100 flex items-center justify-center text-rose-700 text-xs"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                </div>
+                <div class="mt-2">
+                    <div class="text-xl font-bold text-rose-700 leading-tight flex items-baseline gap-1.5">
+                        <span>23</span>
+                        <span class="text-[10px] text-fanos-error font-bold"><i class="fa-solid fa-arrow-up"></i> 17.9%</span>
+                    </div>
+                    <p class="text-[8px] text-fanos-outline mt-0.5">vs Apr 14 - May 11, 2024</p>
+                </div>
+                <div class="h-6 w-full mt-1">
+                    <canvas id="sparkline-quality"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Row 1: Revenue Trend, Therapeutic Contribution, Compliance Score, Regional Sales -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Revenue Trend Line Chart (4 Cols) -->
+            <div class="lg:col-span-4 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Revenue Trend</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Historical actuals vs planned forecast targets</p>
+                </div>
+                <div class="w-full h-64 mt-2">
+                    <canvas id="chart-revenue-trend"></canvas>
+                </div>
+            </div>
+
+            <!-- Therapeutic Area Revenue Contribution Treemap (4 Cols) -->
+            <div class="lg:col-span-4 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Therapeutic Area Revenue</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Contribution split by target drug group line</p>
+                </div>
+                
+                <!-- Treemap Grid Block Container -->
+                <div class="grid grid-cols-3 grid-rows-3 gap-2 h-64 mt-4 text-white text-xs">
+                    <!-- Oncology: 38.1% (Span 2 col, 3 row) -->
+                    <div class="col-span-2 row-span-3 bg-fanos-primary rounded-lg p-3 flex flex-col justify-between border border-[var(--color-primary-hover)]">
+                        <div>
+                            <p class="font-bold text-sm">Oncology</p>
+                            <p class="text-[10px] text-[var(--color-on-primary-container)] mt-1">$542M</p>
+                        </div>
+                        <span class="text-[11px] font-semibold text-right">38.1%</span>
+                    </div>
+                    
+                    <!-- Cardiovascular: 22.6% (Span 1 col, 2 row) -->
+                    <div class="col-span-1 row-span-2 bg-fanos-secondary rounded-lg p-2.5 flex flex-col justify-between">
+                        <div>
+                            <p class="font-bold">Cardio</p>
+                            <p class="text-[9px] text-[var(--color-on-primary-container)]">$321M</p>
+                        </div>
+                        <span class="text-[10px] font-semibold text-right">22.6%</span>
+                    </div>
+
+                    <!-- Diabetes: 13.9% (Span 1 col, 1 row) -->
+                    <div class="col-span-1 row-span-1 bg-fanos-tertiary rounded-lg p-2 flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-[10px]">Diabetes</span>
+                            <span class="text-[9px] text-[var(--color-on-primary-container)]">$198M</span>
+                        </div>
+                        <span class="text-[9px] font-semibold text-right">13.9%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regulatory Compliance Score Radar (2 Cols) -->
+            <div class="lg:col-span-2 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Regulatory Compliance</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Radar score comparison</p>
+                </div>
+                <div class="w-full h-64 flex items-center justify-center">
+                    <canvas id="chart-compliance-radar"></canvas>
+                </div>
+            </div>
+
+            <!-- Global Sales by Region Map List (2 Cols) -->
+            <div class="lg:col-span-2 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Sales by Region</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Top performing territories</p>
+                </div>
+                
+                <div class="space-y-2 mt-4 text-xs">
+                    <div class="flex justify-between items-center py-1.5 border-b border-fanos-surface-container">
+                        <span class="font-semibold fanos-text-title">North America</span>
+                        <div class="text-right">
+                            <p class="font-bold">$587M</p>
+                            <p class="text-[9px] text-fanos-success"><i class="fa-solid fa-caret-up"></i> +14.2%</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center py-1.5 border-b border-fanos-surface-container">
+                        <span class="font-semibold fanos-text-title">Europe</span>
+                        <div class="text-right">
+                            <p class="font-bold">$436M</p>
+                            <p class="text-[9px] text-fanos-success"><i class="fa-solid fa-caret-up"></i> +11.3%</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center py-1.5 border-b border-fanos-surface-container">
+                        <span class="font-semibold fanos-text-title">Asia Pacific</span>
+                        <div class="text-right">
+                            <p class="font-bold">$278M</p>
+                            <p class="text-[9px] text-fanos-success"><i class="fa-solid fa-caret-up"></i> +8.7%</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center py-1.5 border-b border-fanos-surface-container">
+                        <span class="font-semibold fanos-text-title">Latin America</span>
+                        <div class="text-right">
+                            <p class="font-bold">$74M</p>
+                            <p class="text-[9px] text-fanos-success"><i class="fa-solid fa-caret-up"></i> +8.1%</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center py-1.5">
+                        <span class="font-semibold fanos-text-title">Middle East</span>
+                        <div class="text-right">
+                            <p class="font-bold">$46M</p>
+                            <p class="text-[9px] text-fanos-success"><i class="fa-solid fa-caret-up"></i> +6.3%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Row 2: Inventory Health Heatmap, Expiry Risk Matrix, Manufacturing Yield Trend, Demand Forecast -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Heatmap Table Grid (4 Cols) -->
+            <div class="lg:col-span-4 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Inventory Health Heatmap</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Stock coverage index in days per regional warehouse</p>
+                </div>
+                
+                <div class="overflow-x-auto mt-4 text-[10px] w-full">
+                    <table class="w-full text-center border-collapse">
+                        <thead>
+                            <tr class="border-b border-fanos-gray-border fanos-text-body font-bold">
+                                <th class="py-2 text-left">Product</th>
+                                <th class="py-2">WH1</th>
+                                <th class="py-2">WH2</th>
+                                <th class="py-2">WH3</th>
+                                <th class="py-2">WH4</th>
+                                <th class="py-2">WH5</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-fanos-surface-container">
+                            <tr>
+                                <td class="py-2.5 text-left font-semibold fanos-text-title">Oncology A</td>
+                                <td class="py-1"><div class="py-1 rounded grid-green">45</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-light-green">32</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-yellow">28</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-orange">15</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-red">8</div></td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 text-left font-semibold fanos-text-title">Oncology B</td>
+                                <td class="py-1"><div class="py-1 rounded grid-green">60</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-light-green">42</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-light-green">35</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-orange">18</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-orange">12</div></td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 text-left font-semibold fanos-text-title">Cardio X</td>
+                                <td class="py-1"><div class="py-1 rounded grid-light-green">30</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-yellow">25</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-yellow">20</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-orange">10</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-red">6</div></td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 text-left font-semibold fanos-text-title">Diabetes Y</td>
+                                <td class="py-1"><div class="py-1 rounded grid-light-green">40</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-light-green">30</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-yellow">22</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-orange">14</div></td>
+                                <td class="py-1"><div class="py-1 rounded grid-red">9</div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flex items-center justify-between text-[8px] font-bold fanos-text-body border-t border-fanos-surface-container pt-3">
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-emerald-500"></span> &gt; 30 Days</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-amber-500"></span> 15-30 Days</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-orange-500"></span> 7-15 Days</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-red-500"></span> &lt; 7 Days</span>
+                </div>
+            </div>
+
+            <!-- Expiry Risk Bubble Chart (3 Cols) -->
+            <div class="lg:col-span-3 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Expiry Risk Matrix</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Asset value vs days left to expiration</p>
+                </div>
+                <div class="w-full h-64">
+                    <canvas id="chart-expiry-bubble"></canvas>
+                </div>
+            </div>
+
+            <!-- Manufacturing Yield Trend (2 Cols) -->
+            <div class="lg:col-span-2 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Yield Trend</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Planned vs actual yield stats</p>
+                </div>
+                <div class="w-full h-64">
+                    <canvas id="chart-yield-trend"></canvas>
+                </div>
+            </div>
+
+            <!-- Demand Forecast Line Chart (3 Cols) -->
+            <div class="lg:col-span-3 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Demand Forecast</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Next 12-week projections with bounds</p>
+                </div>
+                <div class="w-full h-64">
+                    <canvas id="chart-demand-forecast"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Row 3: Supply Chain Flow, Batch Quality Score, Bottleneck Analysis, Top Products -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Supply Chain flow Sankey Placeholder (4 Cols) -->
+            <div class="lg:col-span-4 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Supply Chain Flow</h2>
+                    <p class="caption text-fanos-outline mt-0.5">30-day material volume logistics tracking</p>
+                </div>
+
+                <!-- Custom Flowchart graphic using SVG elements -->
+                <div class="w-full h-64 mt-4 flex items-center justify-center">
+                    <svg viewBox="0 0 400 240" class="w-full h-full">
+                        <!-- Node Blocks -->
+                        <rect x="10" y="20" width="80" height="30" rx="4" data-color-role="primary-dark" style="fill:var(--color-primary-dark)"/>
+                        <text x="50" y="38" fill="white" font-size="9" text-anchor="middle" font-weight="bold">Raw Materials</text>
+
+                        <rect x="10" y="80" width="80" height="30" rx="4" data-color-role="primary-dark" style="fill:var(--color-primary-dark)"/>
+                        <text x="50" y="98" fill="white" font-size="9" text-anchor="middle" font-weight="bold">API Active</text>
+
+                        <rect x="150" y="50" width="90" height="40" rx="6" data-color-role="primary" style="fill:var(--color-primary)"/>
+                        <text x="195" y="75" fill="white" font-size="10" text-anchor="middle" font-weight="bold">Manufacturing</text>
+
+                        <rect x="300" y="20" width="90" height="30" rx="4" data-color-role="primary-hover" style="fill:var(--color-primary-hover)"/>
+                        <text x="345" y="38" fill="white" font-size="9" text-anchor="middle" font-weight="bold">Dist. Centers</text>
+
+                        <rect x="300" y="80" width="90" height="30" rx="4" data-color-role="primary-hover" style="fill:var(--color-primary-hover)"/>
+                        <text x="345" y="98" fill="white" font-size="9" text-anchor="middle" font-weight="bold">Clinical Hubs</text>
+
+                        <!-- Flow lines / connections -->
+                        <path d="M 90 35 L 150 70" data-color-role="secondary" stroke="#86bfc5" stroke-width="3" fill="none" opacity="0.7"/>
+                        <path d="M 90 95 L 150 70" data-color-role="secondary" stroke="#86bfc5" stroke-width="4" fill="none" opacity="0.7"/>
+                        <path d="M 240 70 L 300 35" data-color-role="tertiary" stroke="#7ec1bb" stroke-width="4" fill="none" opacity="0.7"/>
+                        <path d="M 240 70 L 300 95" data-color-role="tertiary" stroke="#7ec1bb" stroke-width="3" fill="none" opacity="0.7"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Batch Quality score Box plot chart (3 Cols) -->
+            <div class="lg:col-span-3 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Batch Quality Distribution</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Average quality score ratings per plant</p>
+                </div>
+                <div class="w-full h-64">
+                    <canvas id="chart-quality-scores"></canvas>
+                </div>
+            </div>
+
+            <!-- Bottleneck Analysis horizontal bar (2 Cols) -->
+            <div class="lg:col-span-2 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Bottleneck Analysis</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Average process cycle times</p>
+                </div>
+                
+                <div class="space-y-4 mt-4 text-xs">
+                    <div>
+                        <div class="flex justify-between items-center text-[10px] fanos-text-body mb-1">
+                            <span class="font-bold">Raw Material Receipt</span>
+                            <span class="font-mono">2.4 Days</span>
+                        </div>
+                        <div class="w-full bg-fanos-surface-container-low h-2 rounded-full overflow-hidden">
+                            <div class="bg-fanos-primary h-full" style="width: 40%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between items-center text-[10px] fanos-text-body mb-1">
+                            <span class="font-bold">Manufacturing Cycle</span>
+                            <span class="font-mono text-rose-700 font-bold">5.7 Days</span>
+                        </div>
+                        <div class="w-full bg-fanos-surface-container-low h-2 rounded-full overflow-hidden">
+                            <div class="bg-rose-600 h-full" style="width: 85%"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center text-[10px] fanos-text-body mb-1">
+                            <span class="font-bold">Quality Control (QC)</span>
+                            <span class="font-mono">3.1 Days</span>
+                        </div>
+                        <div class="w-full bg-fanos-surface-container-low h-2 rounded-full overflow-hidden">
+                            <div class="bg-fanos-hover-teal h-full" style="width: 55%"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center text-[10px] fanos-text-body mb-1">
+                            <span class="font-bold">Distribution Out</span>
+                            <span class="font-mono">1.8 Days</span>
+                        </div>
+                        <div class="w-full bg-fanos-surface-container-low h-2 rounded-full overflow-hidden">
+                            <div class="bg-[var(--color-on-primary-container)] h-full" style="width: 25%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top 10 Products by revenue horizontal bar (3 Cols) -->
+            <div class="lg:col-span-3 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Top Products</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Top perform. items by total revenue</p>
+                </div>
+                <div class="w-full h-64">
+                    <canvas id="chart-top-products"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Row 4: Expiring Soon Table, Open Quality Events Table, Recent Alerts List -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Expiring Inventory Table (5 Cols) -->
+            <div class="lg:col-span-5 fanos-card p-6 fanos-shadow flex flex-col justify-between min-h-[300px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Expiring Soon - At Risk Inventory</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Products requiring immediate reallocation</p>
+                </div>
+
+                <div class="overflow-x-auto mt-4 w-full">
+                    <table class="w-full text-xs text-left border-collapse whitespace-nowrap">
+                        <thead>
+                            <tr class="bg-[#CFD8DC] fanos-text-title font-bold uppercase text-[9px] border-b border-fanos-gray-border">
+                                <th class="py-2 px-3 rounded-l">Product</th>
+                                <th class="py-2 px-2">Batch No</th>
+                                <th class="py-2 px-2">Expiry Date</th>
+                                <th class="py-2 px-2 text-right">Units</th>
+                                <th class="py-2 px-3 text-center rounded-r">Risk Level</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-fanos-surface-container text-fanos-on-surface-variant">
+                            <tr>
+                                <td class="py-2.5 px-3 font-semibold fanos-text-title">Oncology A</td>
+                                <td class="py-2.5 px-2 font-mono">A2405017</td>
+                                <td class="py-2.5 px-2">2026-06-18</td>
+                                <td class="py-2.5 px-2 text-right font-bold">18,450</td>
+                                <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded-[4px] badge-error text-[10px] font-bold">CRITICAL</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 px-3 font-semibold fanos-text-title">Vaccine Z</td>
+                                <td class="py-2.5 px-2 font-mono">V2403054</td>
+                                <td class="py-2.5 px-2">2026-08-22</td>
+                                <td class="py-2.5 px-2 text-right font-bold">110,200</td>
+                                <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded-[4px] badge-warning text-[10px] font-bold">MEDIUM</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 px-3 font-semibold fanos-text-title">Cardio X</td>
+                                <td class="py-2.5 px-2 font-mono">C2401012</td>
+                                <td class="py-2.5 px-2">2026-09-05</td>
+                                <td class="py-2.5 px-2 text-right font-bold">45,120</td>
+                                <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded-[4px] badge-neutral text-[10px] font-bold font-medium">LOW RISK</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Open Quality Events (4 Cols) -->
+            <div class="lg:col-span-4 fanos-card p-6 fanos-shadow flex flex-col justify-between min-h-[300px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold text-fanos-error">Open Quality Events</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Deviation reports and CAPA flags</p>
+                </div>
+
+                <div class="overflow-x-auto mt-4 w-full">
+                    <table class="w-full text-xs text-left border-collapse whitespace-nowrap">
+                        <thead>
+                            <tr class="bg-[#CFD8DC] fanos-text-title font-bold uppercase text-[9px] border-b border-fanos-gray-border">
+                                <th class="py-2 px-3 rounded-l">Event ID</th>
+                                <th class="py-2 px-2">Type</th>
+                                <th class="py-2 px-2">Status</th>
+                                <th class="py-2 px-3 text-center rounded-r">Priority</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-fanos-surface-container text-fanos-on-surface-variant">
+                            <tr>
+                                <td class="py-2.5 px-3 font-mono font-semibold fanos-text-title">QE-2024-1762</td>
+                                <td class="py-2.5 px-2">Deviation</td>
+                                <td class="py-2.5 px-2 text-rose-700 font-semibold">Open</td>
+                                <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded-[4px] badge-error text-[10px] font-bold">HIGH</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 px-3 font-mono font-semibold fanos-text-title">QE-2024-1781</td>
+                                <td class="py-2.5 px-2">OOS Result</td>
+                                <td class="py-2.5 px-2 text-fanos-warning font-semibold">Investigation</td>
+                                <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded-[4px] badge-warning text-[10px] font-bold">MEDIUM</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Alerts Feed (3 Cols) -->
+            <div class="lg:col-span-3 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[300px]">
+                <div>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Recent Alerts</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Critical system notifications feed</p>
+                </div>
+                
+                <div class="space-y-3 mt-4 overflow-y-auto max-h-[190px] pr-2 text-xs">
+                    <div class="p-2.5 bg-rose-50 border border-rose-100 rounded-lg flex items-start gap-2.5">
+                        <i class="fa-solid fa-circle-exclamation text-rose-700 mt-0.5"></i>
+                        <div>
+                            <p class="font-bold text-rose-950">High risk of stockout for Cardio X in WH2 DC</p>
+                            <p class="text-[9px] text-rose-700 font-medium mt-0.5">2 minutes ago</p>
+                        </div>
+                    </div>
+                    <div class="p-2.5 bg-amber-50 border border-amber-100 rounded-lg flex items-start gap-2.5">
+                        <i class="fa-solid fa-triangle-exclamation text-fanos-warning mt-0.5"></i>
+                        <div>
+                            <p class="font-bold text-amber-950">Batch A2405017 expiring in less than 15 days</p>
+                            <p class="text-[9px] text-fanos-warning font-medium mt-0.5">10 minutes ago</p>
+                        </div>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 border border-slate-100 rounded-lg flex items-start gap-2.5">
+                        <i class="fa-solid fa-circle-info text-slate-700 mt-0.5"></i>
+                        <div>
+                            <p class="font-bold text-slate-950">Yield rate falls below target limit at Plant 4</p>
+                            <p class="text-[9px] text-slate-700 font-medium mt-0.5">1 hour ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- App Initialization and Chart rendering logic -->
+    <script>
+        // Global storage for charts to allow dynamic updates
+        window.charts = {};
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSparklines();
+            renderCharts();
+            setupThemeListeners();
+        });
+
+        function renderSparklines() {
+            const initSparkline = (id, data, color) => {
+                const ctx = document.getElementById(id).getContext('2d');
+                window.charts[id] = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.map((_, i) => i),
+                        datasets: [{
+                            data: data,
+                            borderColor: color,
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            fill: false,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                        scales: { x: { display: false }, y: { display: false } }
+                    }
+                });
+            };
+
+            initSparkline('sparkline-revenue', [10, 14, 12, 18, 16, 22, 20], '#0b4f54');
+            initSparkline('sparkline-profit', [8, 12, 10, 15, 13, 17, 16], '#0b4f54');
+            initSparkline('sparkline-inventory', [15, 14, 16, 17, 15, 16, 18], '#0b4f54');
+            initSparkline('sparkline-yield', [88, 89, 87, 88, 89, 89.2, 89.7], '#0b4f54');
+            initSparkline('sparkline-compliance', [92, 93, 93.5, 93, 94, 93.8, 94.2], getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim());
+            initSparkline('sparkline-quality', [18, 22, 20, 24, 21, 23, 23], '#ba1a1a');
+        }
+
+        function renderCharts() {
+            // 1. Revenue Trend line chart
+            const ctxRev = document.getElementById('chart-revenue-trend').getContext('2d');
+            window.charts['revenue-trend'] = new Chart(ctxRev, {
+                type: 'line',
+                data: {
+                    labels: ['May 12', 'May 19', 'May 26', 'Jun 2', 'Jun 8'],
+                    datasets: [
+                        {
+                            label: 'Actual Revenue',
+                            data: [300, 500, 700, 950, 1230],
+                            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(),
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Target Target',
+                            data: [400, 600, 800, 950, 1100],
+                            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-on-primary-container').trim(),
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 9 } } } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 9 } } },
+                        y: { grid: { color: 'var(--color-surface-low)' }, ticks: { font: { size: 9 } } }
+                    }
+                }
+            });
+
+            // 2. Regulatory Compliance Score radar chart
+            const ctxRadar = document.getElementById('chart-compliance-radar').getContext('2d');
+            window.charts['compliance-radar'] = new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: ['FDA', 'EMA', 'GMP', 'Documentation', 'Audits', 'Training'],
+                    datasets: [{
+                        label: 'Compliance',
+                        data: [94, 92, 95, 90, 93, 96],
+                        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim() + '26',
+                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(),
+                        borderWidth: 2,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        r: {
+                            ticks: { display: false },
+                            grid: { color: 'var(--color-gray-border)' },
+                            pointLabels: { font: { size: 8, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+
+            // 3. Expiry Risk Matrix bubble chart
+            const ctxBubble = document.getElementById('chart-expiry-bubble').getContext('2d');
+            window.charts['expiry-bubble'] = new Chart(ctxBubble, {
+                type: 'bubble',
+                data: {
+                    datasets: [
+                        {
+                            label: 'High Risk',
+                            data: [
+                                { x: 15, y: 8, r: 8 },
+                                { x: 22, y: 6.5, r: 12 }
+                            ],
+                            backgroundColor: 'rgba(186, 26, 26, 0.7)'
+                        },
+                        {
+                            label: 'Medium Risk',
+                            data: [
+                                { x: 45, y: 4.5, r: 10 },
+                                { x: 60, y: 7.2, r: 6 }
+                            ],
+                            backgroundColor: 'rgba(217, 119, 6, 0.7)'
+                        },
+                        {
+                            label: 'Low Risk',
+                            data: [
+                                { x: 120, y: 2.1, r: 7 },
+                                { x: 140, y: 3.5, r: 9 }
+                            ],
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { title: { display: true, text: 'Days left', font: { size: 8 } }, ticks: { font: { size: 8 } } },
+                        y: { title: { display: true, text: 'Value ($M)', font: { size: 8 } }, ticks: { font: { size: 8 } } }
+                    }
+                }
+            });
+
+            // 4. Yield Trend chart
+            const ctxYield = document.getElementById('chart-yield-trend').getContext('2d');
+            window.charts['yield-trend'] = new Chart(ctxYield, {
+                type: 'line',
+                data: {
+                    labels: ['May 12', 'May 19', 'May 26', 'Jun 2', 'Jun 8'],
+                    datasets: [
+                        {
+                            label: 'Planned',
+                            data: [90, 90, 90, 90, 90],
+                            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-secondary').trim(),
+                            borderWidth: 1.5,
+                            borderDash: [4, 4],
+                            fill: false,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Actual',
+                            data: [88, 89.2, 87.5, 88.3, 89.7],
+                            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(),
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 8 } } },
+                        y: { grid: { color: 'var(--color-surface-low)' }, ticks: { font: { size: 8 } } }
+                    }
+                }
+            });
+
+            // 5. Demand Forecast chart
+            const ctxDemand = document.getElementById('chart-demand-forecast').getContext('2d');
+            window.charts['demand-forecast'] = new Chart(ctxDemand, {
+                type: 'line',
+                data: {
+                    labels: ['Apr 14', 'May 12', 'Jun 9', 'Jul 7', 'Aug 4'],
+                    datasets: [
+                        {
+                            label: 'Historical',
+                            data: [220, 290, 310, null, null],
+                            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-secondary').trim(),
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Forecast',
+                            data: [null, null, 310, 340, 320],
+                            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-tertiary').trim(),
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 8 } } },
+                        y: { grid: { color: 'var(--color-surface-low)' }, ticks: { font: { size: 8 } } }
+                    }
+                }
+            });
+
+            // 6. Quality scores Box plots representation
+            const ctxQual = document.getElementById('chart-quality-scores').getContext('2d');
+            window.charts['quality-scores'] = new Chart(ctxQual, {
+                type: 'bar',
+                data: {
+                    labels: ['Plant 1', 'Plant 2', 'Plant 3', 'Plant 4', 'Plant 5'],
+                    datasets: [
+                        {
+                            label: 'Low Range',
+                            data: [82, 85, 80, 84, 86],
+                            backgroundColor: 'transparent',
+                            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-gray-border').trim(),
+                            borderWidth: 1,
+                            stack: 'Stack 0'
+                        },
+                        {
+                            label: 'Avg Score',
+                            data: [8, 7, 10, 9, 6],
+                            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(),
+                            stack: 'Stack 0'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 8 } } },
+                        y: { grid: { color: 'var(--color-surface-low)' }, ticks: { font: { size: 8 } }, min: 70 }
+                    }
+                }
+            });
+
+            // 7. Top Products horizontal bar
+            const ctxTop = document.getElementById('chart-top-products').getContext('2d');
+            window.charts['top-products'] = new Chart(ctxTop, {
+                type: 'bar',
+                data: {
+                    labels: ['Onco A', 'Onco B', 'Cardio X', 'Diab Y', 'Vacc Z'],
+                    datasets: [{
+                        data: [180, 142, 98, 86, 74],
+                        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(),
+                        borderRadius: 4,
+                        maxBarThickness: 16
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'var(--color-surface-low)' }, ticks: { font: { size: 8 } } },
+                        y: { grid: { display: false }, ticks: { font: { size: 8 } } }
+                    }
+                }
+            });
+        }
+
+        // Live Color Palette Management
+        function setupThemeListeners() {
+            // Toggle panel visibility logic
+            const toggleBtn = document.getElementById('toggle-customizer-btn');
+            const panel = document.getElementById('palette-customizer-panel');
+            const chevron = document.getElementById('toggle-customizer-chevron');
+
+            toggleBtn.addEventListener('click', () => {
+                const isHidden = panel.classList.toggle('hidden');
+                if (isHidden) {
+                    chevron.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                } else {
+                    chevron.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                }
+            });
+
+            const pickPrimary = document.getElementById('theme-primary');
+            const pickSecondary = document.getElementById('theme-secondary');
+            const pickTertiary = document.getElementById('theme-tertiary');
+            const pickBg = document.getElementById('theme-bg');
+            const pickSurface = document.getElementById('theme-surface');
+            const selectPresets = document.getElementById('theme-presets');
+
+            const handleCustomColor = () => {
+                updateTheme(pickPrimary.value, pickSecondary.value, pickTertiary.value, pickBg.value, pickSurface.value);
+            };
+
+            pickPrimary.addEventListener('input', handleCustomColor);
+            pickSecondary.addEventListener('input', handleCustomColor);
+            pickTertiary.addEventListener('input', handleCustomColor);
+            pickBg.addEventListener('input', handleCustomColor);
+            pickSurface.addEventListener('input', handleCustomColor);
+
+            const presets = {
+                eucalyptus: { primary: '#0b4f54', secondary: '#515f74', tertiary: '#003734', bg: '#f6fafc', surface: '#ffffff' },
+                coldchain: { primary: '#3c4858', secondary: '#64748b', tertiary: '#1e293b', bg: '#f8fafc', surface: '#ffffff' },
+                emerald: { primary: '#065f46', secondary: '#334155', tertiary: '#047857', bg: '#f0fdf4', surface: '#ffffff' },
+                contrast: { primary: '#1e293b', secondary: '#475569', tertiary: '#334155', bg: '#f8fafc', surface: '#ffffff' },
+                midnight: { primary: '#115e59', secondary: '#94a3b8', tertiary: '#134e4a', bg: '#0f172a', surface: '#1e293b' }
+            };
+
+            selectPresets.addEventListener('change', (e) => {
+                const choice = presets[e.target.value];
+                if (choice) {
+                    pickPrimary.value = choice.primary;
+                    pickSecondary.value = choice.secondary;
+                    pickTertiary.value = choice.tertiary;
+                    pickBg.value = choice.bg;
+                    pickSurface.value = choice.surface;
+                    updateTheme(choice.primary, choice.secondary, choice.tertiary, choice.bg, choice.surface);
+                }
+            });
+        }
+
+        function updateTheme(primary, secondary, tertiary, bg, surface) {
+            const adjustColorBrightness = (hex, percent) => {
+                let R = parseInt(hex.substring(1, 3), 16);
+                let G = parseInt(hex.substring(3, 5), 16);
+                let B = parseInt(hex.substring(5, 7), 16);
+
+                R = parseInt(R * (100 + percent) / 100);
+                G = parseInt(G * (100 + percent) / 100);
+                B = parseInt(B * (100 + percent) / 100);
+
+                R = (R < 255) ? R : 255;
+                G = (G < 255) ? G : 255;
+                B = (B < 255) ? B : 255;
+
+                R = (R > 0) ? R : 0;
+                G = (G > 0) ? G : 0;
+                B = (B > 0) ? B : 0;
+
+                const rHex = R.toString(16).padStart(2, '0');
+                const gHex = G.toString(16).padStart(2, '0');
+                const bHex = B.toString(16).padStart(2, '0');
+
+                return `#${rHex}${gHex}${bHex}`;
+            };
+
+            const darkPrimary = adjustColorBrightness(primary, -35); 
+            const hoverPrimary = adjustColorBrightness(primary, 20); 
+
+            // Calculate derived surface / text colors for dark vs light background
+            const isDarkBg = parseInt(bg.substring(1, 3), 16) < 120;
+            const textPrimary = isDarkBg ? '#ffffff' : primary;
+            const textOnSurface = isDarkBg ? '#f1f5f9' : '#181c1e';
+            const textOnSurfaceVariant = isDarkBg ? '#94a3b8' : '#404849';
+            const surfaceLow = isDarkBg ? adjustColorBrightness(surface, -15) : adjustColorBrightness(bg, -3);
+            const surfaceContainer = isDarkBg ? adjustColorBrightness(surface, -5) : adjustColorBrightness(bg, -5);
+            const grayBorder = isDarkBg ? '#334155' : '#CFD8DC';
+
+            const root = document.documentElement;
+            root.style.setProperty('--color-primary', primary);
+            root.style.setProperty('--color-primary-dark', darkPrimary);
+            root.style.setProperty('--color-primary-hover', hoverPrimary);
+            root.style.setProperty('--color-secondary', secondary);
+            root.style.setProperty('--color-tertiary', tertiary);
+            // Compute on-primary-container: a light tint of primary for dark bg, or the primary itself for light
+            const priR = parseInt(primary.substring(1,3),16);
+            const priG = parseInt(primary.substring(3,5),16);
+            const priB = parseInt(primary.substring(5,7),16);
+            const oncR = Math.min(255,Math.round(priR+(255-priR)*0.6));
+            const oncG = Math.min(255,Math.round(priG+(255-priG)*0.6));
+            const oncB = Math.min(255,Math.round(priB+(255-priB)*0.6));
+            const onPrimaryContainer = '#'+oncR.toString(16).padStart(2,'0')+oncG.toString(16).padStart(2,'0')+oncB.toString(16).padStart(2,'0');
+            root.style.setProperty('--color-on-primary-container', onPrimaryContainer);
+            // Derive secondary-container as a light tint of secondary
+            const secR = parseInt(secondary.substring(1,3),16);
+            const secG = parseInt(secondary.substring(3,5),16);
+            const secB = parseInt(secondary.substring(5,7),16);
+            const secContainerR = Math.min(255, Math.round(secR + (255 - secR) * 0.75));
+            const secContainerG = Math.min(255, Math.round(secG + (255 - secG) * 0.75));
+            const secContainerB = Math.min(255, Math.round(secB + (255 - secB) * 0.75));
+            const secContainer = '#' + secContainerR.toString(16).padStart(2,'0') + secContainerG.toString(16).padStart(2,'0') + secContainerB.toString(16).padStart(2,'0');
+            root.style.setProperty('--color-secondary-container', isDarkBg ? adjustColorBrightness(secondary, 30) : secContainer);
+            // Derive tertiary-dark for sidebar
+            const darkTertiary = adjustColorBrightness(tertiary, -20);
+            root.style.setProperty('--color-tertiary-dark', darkTertiary);
+            root.style.setProperty('--color-background', bg);
+            root.style.setProperty('--color-surface', surface);
+            root.style.setProperty('--color-surface-low', surfaceLow);
+            root.style.setProperty('--color-surface-container', surfaceContainer);
+            root.style.setProperty('--color-surface-container-high', adjustColorBrightness(surfaceContainer, -2));
+            root.style.setProperty('--color-surface-container-highest', adjustColorBrightness(surfaceContainer, -4));
+            root.style.setProperty('--color-text-primary', textPrimary);
+            root.style.setProperty('--color-text-on-surface', textOnSurface);
+            root.style.setProperty('--color-text-on-surface-variant', textOnSurfaceVariant);
+            root.style.setProperty('--color-gray-border', grayBorder);
+            // Dynamic shadow tinted with primary color
+            root.style.setProperty('--shadow-color', `rgba(${priR}, ${priG}, ${priB}, 0.07)`);
+            root.style.setProperty('--shadow-color-strong', `rgba(${priR}, ${priG}, ${priB}, 0.14)`);
+
+            // Update SVGs or other static items
+            // Update SVG elements by data-color-role
+            document.querySelectorAll('[data-color-role]').forEach(el => {
+                const role = el.dataset.colorRole;
+                if (el.tagName.toLowerCase() === 'rect' || el.tagName.toLowerCase() === 'circle') {
+                    if (role === 'primary') el.style.fill = primary;
+                    else if (role === 'primary-dark') el.style.fill = darkPrimary;
+                    else if (role === 'primary-hover') el.style.fill = hoverPrimary;
+                    else if (role === 'secondary') el.style.fill = secondary;
+                    else if (role === 'tertiary') el.style.fill = tertiary;
+                } else if (el.tagName.toLowerCase() === 'path' || el.tagName.toLowerCase() === 'line') {
+                    if (role === 'primary') el.setAttribute('stroke', primary);
+                    else if (role === 'secondary') el.setAttribute('stroke', secondary);
+                    else if (role === 'tertiary') el.setAttribute('stroke', tertiary);
+                    else if (role === 'on-primary-container') el.setAttribute('stroke', hoverPrimary);
+                }
+            });
+
+            // Update all charts
+            updateChartColors(primary, secondary, tertiary, isDarkBg ? '#94a3b8' : '#707979');
+        }
+
+        function updateChartColors(primary, secondary, tertiary, axisColor) {
+            // Update Sparklines
+            const sparklineIds = ['sparkline-revenue', 'sparkline-profit', 'sparkline-inventory', 'sparkline-yield', 'sparkline-compliance'];
+            sparklineIds.forEach(id => {
+                if (window.charts[id]) {
+                    window.charts[id].data.datasets[0].borderColor = primary;
+                    window.charts[id].update();
+                }
+            });
+
+            // Update Revenue Trend (dataset 0 = primary, dataset 1 = secondary)
+            if (window.charts['revenue-trend']) {
+                window.charts['revenue-trend'].data.datasets[0].borderColor = primary;
+                window.charts['revenue-trend'].data.datasets[1].borderColor = getComputedStyle(document.documentElement).getPropertyValue('--color-on-primary-container').trim();
+                window.charts['revenue-trend'].options.scales.x.ticks.color = axisColor;
+                window.charts['revenue-trend'].options.scales.y.ticks.color = axisColor;
+                window.charts['revenue-trend'].update();
+            }
+
+            // Update Compliance Radar
+            if (window.charts['compliance-radar']) {
+                window.charts['compliance-radar'].data.datasets[0].borderColor = primary;
+                window.charts['compliance-radar'].data.datasets[0].backgroundColor = primary + '26';
+                window.charts['compliance-radar'].options.scales.r.pointLabels.color = axisColor;
+                window.charts['compliance-radar'].options.scales.r.grid.color = axisColor + '44';
+                window.charts['compliance-radar'].update();
+            }
+
+            // Update Yield Trend
+            if (window.charts['yield-trend']) {
+                window.charts['yield-trend'].data.datasets[0].borderColor = secondary;
+                window.charts['yield-trend'].data.datasets[1].borderColor = primary;
+                window.charts['yield-trend'].options.scales.x.ticks.color = axisColor;
+                window.charts['yield-trend'].options.scales.y.ticks.color = axisColor;
+                window.charts['yield-trend'].update();
+            }
+
+            // Update Demand Forecast
+            if (window.charts['demand-forecast']) {
+                window.charts['demand-forecast'].data.datasets[0].borderColor = secondary;
+                window.charts['demand-forecast'].data.datasets[1].borderColor = tertiary;
+                window.charts['demand-forecast'].options.scales.x.ticks.color = axisColor;
+                window.charts['demand-forecast'].options.scales.y.ticks.color = axisColor;
+                window.charts['demand-forecast'].update();
+            }
+
+            // Update Quality scores bar chart
+            if (window.charts['quality-scores']) {
+                window.charts['quality-scores'].data.datasets[0].borderColor = axisColor;
+                window.charts['quality-scores'].data.datasets[1].backgroundColor = primary;
+                window.charts['quality-scores'].options.scales.x.ticks.color = axisColor;
+                window.charts['quality-scores'].options.scales.y.ticks.color = axisColor;
+                window.charts['quality-scores'].update();
+            }
+
+            // Update Top Products bar chart
+            if (window.charts['top-products']) {
+                window.charts['top-products'].data.datasets[0].backgroundColor = primary;
+                window.charts['top-products'].options.scales.x.ticks.color = axisColor;
+                window.charts['top-products'].options.scales.y.ticks.color = axisColor;
+                window.charts['top-products'].update();
+            }
+        }
+    </script>
+</body>
+</html>
