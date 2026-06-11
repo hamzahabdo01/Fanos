@@ -62,6 +62,8 @@
             --color-on-primary-container: #86bfc5;
             --color-primary-container: #0b4f54;
             --color-secondary: #515f74;
+            --color-tertiary: #003734;
+            --color-tertiary-dark: #00281e;
             --color-background: #f6fafc;
             --color-surface: #ffffff;
             --color-surface-low: #f0f4f6;
@@ -190,8 +192,8 @@
 
             <!-- Navigation Links -->
             <nav class="mt-8 space-y-1">
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold text-white bg-fanos-primary shadow-sm transition-all duration-150">
-                    <i class="fa-solid fa-chart-line text-sm w-4 text-[var(--color-on-primary-container)]"></i>
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold text-white bg-fanos-secondary shadow-sm transition-all duration-150">
+                    <i class="fa-solid fa-chart-line text-sm w-4 text-[var(--color-secondary-container)]"></i>
                     <span>Overview</span>
                 </a>
                 <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all duration-150">
@@ -283,6 +285,9 @@
                         <option value="eucalyptus">Tech-Forward Eucalyptus</option>
                         <option value="coldchain">Cold Chain Steel & Logistics</option>
                         <option value="emerald">High-Performance Emerald</option>
+                        <option value="earthly">Earthly — Dark Green & Brown</option>
+                        <option value="turmeric">Turmeric — Warm Golden</option>
+                        <option value="sandy">Sandy — Coastal Beige</option>
                         <option value="contrast">Minimalist High-Contrast Slate</option>
                         <option value="midnight">Deep Charcoal Dark Mode</option>
                     </select>
@@ -495,61 +500,16 @@
                 </div>
             </div>
 
-            <!-- Regulatory Compliance Score Radar (2 Cols) -->
-            <div class="lg:col-span-2 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
+            <!-- Regional Sales Donut (replaces Regulatory Compliance + Sales by Region) -->
+            <div class="lg:col-span-4 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
                 <div>
-                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Regulatory Compliance</h2>
-                    <p class="caption text-fanos-outline mt-0.5">Radar score comparison</p>
+                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Regional Sales Distribution</h2>
+                    <p class="caption text-fanos-outline mt-0.5">Share of total revenue by region</p>
                 </div>
-                <div class="w-full h-64 flex items-center justify-center">
-                    <canvas id="chart-compliance-radar"></canvas>
+                <div class="w-full h-64 mt-2 flex items-center justify-center">
+                    <canvas id="chart-region-pie"></canvas>
                 </div>
-            </div>
 
-            <!-- Global Sales by Region Map List (2 Cols) -->
-            <div class="lg:col-span-2 fanos-card p-6 fanos-shadow flex flex-col justify-between h-[360px]">
-                <div>
-                    <h2 class="text-xs uppercase tracking-wider font-bold fanos-text-title">Sales by Region</h2>
-                    <p class="caption text-fanos-outline mt-0.5">Top performing territories</p>
-                </div>
-                
-                <div class="space-y-2 mt-4 text-xs">
-                    <div class="flex justify-between items-center py-1.5 border-b border-fanos-surface-container">
-                        <span class="font-semibold fanos-text-title">North America</span>
-                        <div class="text-right">
-                            <p class="font-bold">$587M</p>
-                            <p class="text-[9px] text-fanos-success"><i class="fa-solid fa-caret-up"></i> +14.2%</p>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center py-1.5 border-b border-fanos-surface-container">
-                        <span class="font-semibold fanos-text-title">Europe</span>
-                        <div class="text-right">
-                            <p class="font-bold">$436M</p>
-                            <p class="text-[9px] text-fanos-success"><i class="fa-solid fa-caret-up"></i> +11.3%</p>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center py-1.5 border-b border-fanos-surface-container">
-                        <span class="font-semibold fanos-text-title">Asia Pacific</span>
-                        <div class="text-right">
-                            <p class="font-bold">$278M</p>
-                            <p class="text-[9px] text-fanos-success"><i class="fa-solid fa-caret-up"></i> +8.7%</p>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center py-1.5 border-b border-fanos-surface-container">
-                        <span class="font-semibold fanos-text-title">Latin America</span>
-                        <div class="text-right">
-                            <p class="font-bold">$74M</p>
-                            <p class="text-[9px] text-fanos-success"><i class="fa-solid fa-caret-up"></i> +8.1%</p>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center py-1.5">
-                        <span class="font-semibold fanos-text-title">Middle East</span>
-                        <div class="text-right">
-                            <p class="font-bold">$46M</p>
-                            <p class="text-[9px] text-fanos-success"><i class="fa-solid fa-caret-up"></i> +6.3%</p>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -662,31 +622,9 @@
                     <p class="caption text-fanos-outline mt-0.5">30-day material volume logistics tracking</p>
                 </div>
 
-                <!-- Custom Flowchart graphic using SVG elements -->
+                <!-- Simple supply pie (clean + minimal) -->
                 <div class="w-full h-64 mt-4 flex items-center justify-center">
-                    <svg viewBox="0 0 400 240" class="w-full h-full">
-                        <!-- Node Blocks -->
-                        <rect x="10" y="20" width="80" height="30" rx="4" data-color-role="primary-dark" style="fill:var(--color-primary-dark)"/>
-                        <text x="50" y="38" fill="white" font-size="9" text-anchor="middle" font-weight="bold">Raw Materials</text>
-
-                        <rect x="10" y="80" width="80" height="30" rx="4" data-color-role="primary-dark" style="fill:var(--color-primary-dark)"/>
-                        <text x="50" y="98" fill="white" font-size="9" text-anchor="middle" font-weight="bold">API Active</text>
-
-                        <rect x="150" y="50" width="90" height="40" rx="6" data-color-role="primary" style="fill:var(--color-primary)"/>
-                        <text x="195" y="75" fill="white" font-size="10" text-anchor="middle" font-weight="bold">Manufacturing</text>
-
-                        <rect x="300" y="20" width="90" height="30" rx="4" data-color-role="primary-hover" style="fill:var(--color-primary-hover)"/>
-                        <text x="345" y="38" fill="white" font-size="9" text-anchor="middle" font-weight="bold">Dist. Centers</text>
-
-                        <rect x="300" y="80" width="90" height="30" rx="4" data-color-role="primary-hover" style="fill:var(--color-primary-hover)"/>
-                        <text x="345" y="98" fill="white" font-size="9" text-anchor="middle" font-weight="bold">Clinical Hubs</text>
-
-                        <!-- Flow lines / connections -->
-                        <path d="M 90 35 L 150 70" data-color-role="secondary" stroke="#86bfc5" stroke-width="3" fill="none" opacity="0.7"/>
-                        <path d="M 90 95 L 150 70" data-color-role="secondary" stroke="#86bfc5" stroke-width="4" fill="none" opacity="0.7"/>
-                        <path d="M 240 70 L 300 35" data-color-role="tertiary" stroke="#7ec1bb" stroke-width="4" fill="none" opacity="0.7"/>
-                        <path d="M 240 70 L 300 95" data-color-role="tertiary" stroke="#7ec1bb" stroke-width="3" fill="none" opacity="0.7"/>
-                    </svg>
+                    <canvas id="chart-supply-pie" class="w-full h-full"></canvas>
                 </div>
             </div>
 
@@ -962,30 +900,40 @@
                 }
             });
 
-            // 2. Regulatory Compliance Score radar chart
-            const ctxRadar = document.getElementById('chart-compliance-radar').getContext('2d');
-            window.charts['compliance-radar'] = new Chart(ctxRadar, {
-                type: 'radar',
+            // 2. Regional Sales Donut chart (replaces radar + region list)
+            const ctxRegion = document.getElementById('chart-region-pie').getContext('2d');
+            const regionLabels = ['North America', 'Europe', 'Asia Pacific', 'Latin America', 'Middle East'];
+            const regionData = [587, 436, 278, 74, 46];
+            const primary = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim();
+            const secondary = getComputedStyle(document.documentElement).getPropertyValue('--color-secondary').trim();
+            const tertiary = getComputedStyle(document.documentElement).getPropertyValue('--color-tertiary').trim();
+            const palette = [primary, secondary, tertiary, '#f59e0b', '#ef4444'];
+
+            window.charts['region-pie'] = new Chart(ctxRegion, {
+                type: 'doughnut',
                 data: {
-                    labels: ['FDA', 'EMA', 'GMP', 'Documentation', 'Audits', 'Training'],
+                    labels: regionLabels,
                     datasets: [{
-                        label: 'Compliance',
-                        data: [94, 92, 95, 90, 93, 96],
-                        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim() + '26',
-                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(),
-                        borderWidth: 2,
-                        pointRadius: 3
+                        data: regionData,
+                        backgroundColor: palette,
+                        borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        r: {
-                            ticks: { display: false },
-                            grid: { color: 'var(--color-gray-border)' },
-                            pointLabels: { font: { size: 8, weight: 'bold' } }
+                    cutout: '60%',
+                    plugins: {
+                        legend: { position: 'right', labels: { boxWidth: 12, font: { size: 10 }, color: getComputedStyle(document.documentElement).getPropertyValue('--color-text-on-surface').trim() } },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => {
+                                    const val = ctx.raw;
+                                    const sum = regionData.reduce((a,b)=>a+b,0);
+                                    const pct = ((val/sum)*100).toFixed(1);
+                                    return `${ctx.label}: $${val}M (${pct}%)`;
+                                }
+                            }
                         }
                     }
                 }
@@ -1166,6 +1114,68 @@
                     }
                 }
             });
+
+            // 8. Supply Chain — simple pie (clean, legend with percentages)
+            const ctxSupplyPie = document.getElementById('chart-supply-pie').getContext('2d');
+            const supplyLabels = ['Upstream', 'Manufacturing', 'Logistics'];
+            // Aggregated sample values (Upstream = RawMaterials+API, Manufacturing, Logistics = Distribution+Clinical)
+            const supplyValues = [50, 25, 25];
+            const spPrimary = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim();
+            const spSecondary = getComputedStyle(document.documentElement).getPropertyValue('--color-secondary').trim();
+            const spTertiary = getComputedStyle(document.documentElement).getPropertyValue('--color-tertiary').trim();
+            const supplyColors = [spPrimary, spSecondary, spTertiary];
+
+            window.charts['supply-pie'] = new Chart(ctxSupplyPie, {
+                type: 'pie',
+                data: {
+                    labels: supplyLabels,
+                    datasets: [{
+                        data: supplyValues,
+                        backgroundColor: supplyColors,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                font: { size: 11 },
+                                generateLabels: (chart) => {
+                                    const data = chart.data.datasets[0].data;
+                                    const labels = chart.data.labels;
+                                    const sum = data.reduce((a,b)=>a+b,0) || 1;
+                                    return labels.map((label, i) => {
+                                        const val = data[i];
+                                        const pct = Math.round((val / sum) * 100);
+                                        return {
+                                            text: `${label} ${pct}%`,
+                                            fillStyle: chart.data.datasets[0].backgroundColor[i],
+                                            hidden: isNaN(val) || val === null,
+                                            index: i
+                                        };
+                                    });
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => {
+                                    const val = ctx.raw;
+                                    const sum = supplyValues.reduce((a,b)=>a+b,0);
+                                    const pct = ((val/sum)*100).toFixed(1);
+                                    return `${ctx.label}: ${val} (${pct}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            
         }
 
         // Live Color Palette Management
@@ -1205,6 +1215,9 @@
                 eucalyptus: { primary: '#0b4f54', secondary: '#515f74', tertiary: '#003734', bg: '#f6fafc', surface: '#ffffff' },
                 coldchain: { primary: '#3c4858', secondary: '#64748b', tertiary: '#1e293b', bg: '#f8fafc', surface: '#ffffff' },
                 emerald: { primary: '#065f46', secondary: '#334155', tertiary: '#047857', bg: '#f0fdf4', surface: '#ffffff' },
+                earthly: { primary: '#0b3d2e', secondary: '#6b3f2f', tertiary: '#3f6b4a', bg: '#f4efe8', surface: '#ffffff' },
+                    turmeric: { primary: '#9b5310', secondary: '#5f3b27', tertiary: '#b6780a', bg: '#fff3e6', surface: '#ffffff' },
+                    sandy: { primary: '#b29878', secondary: '#85674a', tertiary: '#bfae8b', bg: '#f6f2e8', surface: '#ffffff' },
                 contrast: { primary: '#1e293b', secondary: '#475569', tertiary: '#334155', bg: '#f8fafc', surface: '#ffffff' },
                 midnight: { primary: '#115e59', secondary: '#94a3b8', tertiary: '#134e4a', bg: '#0f172a', surface: '#1e293b' }
             };
@@ -1341,13 +1354,28 @@
                 window.charts['revenue-trend'].update();
             }
 
-            // Update Compliance Radar
-            if (window.charts['compliance-radar']) {
-                window.charts['compliance-radar'].data.datasets[0].borderColor = primary;
-                window.charts['compliance-radar'].data.datasets[0].backgroundColor = primary + '26';
-                window.charts['compliance-radar'].options.scales.r.pointLabels.color = axisColor;
-                window.charts['compliance-radar'].options.scales.r.grid.color = axisColor + '44';
-                window.charts['compliance-radar'].update();
+            // Update Regional Sales donut
+            if (window.charts['region-pie']) {
+                const palette = [primary, secondary, tertiary, '#f59e0b', '#ef4444'];
+                window.charts['region-pie'].data.datasets[0].backgroundColor = palette;
+                if (window.charts['region-pie'].options.plugins && window.charts['region-pie'].options.plugins.legend) {
+                    window.charts['region-pie'].options.plugins.legend.labels.color = axisColor;
+                }
+                window.charts['region-pie'].update();
+            }
+
+            // Update Supply Pie colors and legend
+            if (window.charts['supply-pie']) {
+                const spPrimary = primary;
+                const spSecondary = secondary;
+                const spTertiary = tertiary;
+                const palette = [spPrimary, spSecondary, spTertiary];
+                window.charts['supply-pie'].data.datasets[0].backgroundColor = palette;
+                if (window.charts['supply-pie'].options.plugins && window.charts['supply-pie'].options.plugins.legend) {
+                    // regenerate legend labels color via chart update
+                    window.charts['supply-pie'].options.plugins.legend.labels.color = axisColor;
+                }
+                window.charts['supply-pie'].update();
             }
 
             // Update Yield Trend
@@ -1384,6 +1412,8 @@
                 window.charts['top-products'].options.scales.y.ticks.color = axisColor;
                 window.charts['top-products'].update();
             }
+
+            
         }
     </script>
 </body>
